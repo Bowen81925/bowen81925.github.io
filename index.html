@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijn Startpagina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 1.5s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #4776E6, #8E54E9);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(-2px);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Verbeterde spinner styling */
+        .spinner-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            position: relative;
+            animation: spinExpand 2s ease-in-out infinite;
+        }
+
+        .spinner-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+
+        .spinner-inner-1 {
+            border-top: 3px solid #8E54E9;
+            border-bottom: 3px solid #4776E6;
+            animation: rotate 1s linear infinite;
+        }
+
+        .spinner-inner-2 {
+            border-left: 3px solid #00dbde;
+            border-right: 3px solid #fc00ff;
+            animation: rotate 0.8s linear infinite reverse;
+            transform: scale(0.7);
+        }
+
+        .spinner-inner-3 {
+            border-top: 3px solid #FF416C;
+            border-bottom: 3px solid #FF4B2B;
+            animation: rotate 1.2s linear infinite;
+            transform: scale(0.4);
+        }
+
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s ease-out infinite;
+        }
+
+        @keyframes spinExpand {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+            }
+            25% {
+                transform: scale(1.2) rotate(90deg);
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+            }
+            75% {
+                transform: scale(1.2) rotate(270deg);
+            }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg) scale(var(--scale, 1)); }
+            100% { transform: rotate(360deg) scale(var(--scale, 1)); }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Final shrink animatie */
+        .spinner.shrink {
+            animation: finalShrink 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes finalShrink {
+            0% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(0.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Loading text animatie */
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0;
+            animation: textFade 2s ease-in-out infinite;
+        }
+
+        @keyframes textFade {
+            0%, 100% {
+                opacity: 0.7;
+                transform: translateY(0px);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Particle effects */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(20px);
+            }
+        }
+
+        /* Achtergrond transitie */
+        .bg-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Fade in animatie */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Footer styling */
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress-bar"></div>
+    
+    <div class="container fade-in">
+        <h1>Mijn Startpagina</h1>
+        
+        <div class="button-container">
+            <button class="btn" id="chat-btn">💬 Chat</button>
+            <button class="btn" id="games-btn">🎮 Games</button>
+            <button class="btn" id="google-btn">🔍 Google</button>
+        </div>
+        
+        <div class="footer">
+            <p>Klik op een knop om naar de gewenste pagina te gaan</p>
+        </div>
+    </div>
+
+    <!-- Verbeterde spinner -->
+    <div class="spinner-container" id="spinner-container">
+        <div class="spinner" id="spinner">
+            <div class="spinner-inner spinner-inner-1"></div>
+            <div class="spinner-inner spinner-inner-2"></div>
+            <div class="spinner-inner spinner-inner-3"></div>
+            <div class="pulse-ring"></div>
+        </div>
+        <div class="loading-text" id="loading-text">Bezig met laden...</div>
+    </div>
+
+    <!-- Particles container -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Achtergrond transitie -->
+    <div class="bg-transition" id="bg-transition"></div>
+
+    <script>
+        // DOM elementen
+        const chatBtn = document.getElementById('chat-btn');
+        const gamesBtn = document.getElementById('games-btn');
+        const googleBtn = document.getElementById('google-btn');
+        const spinnerContainer = document.getElementById('spinner-container');
+        const spinner = document.getElementById('spinner');
+        const loadingText = document.getElementById('loading-text');
+        const bgTransition = document.getElementById('bg-transition');
+        const container = document.querySelector('.container');
+        const body = document.body;
+        const progressBar = document.getElementById('progress-bar');
+        const particlesContainer = document.getElementById('particles');
+
+        // URLs voor elke knop
+        const urls = {
+            chat: 'https://bowen81925.github.io/chat',
+            games: 'https://bowen81925.github.io/games',
+            google: 'https://www.google.com'
+        };
+
+        // Functie om particles te creëren
+        function createParticles(count) {
+            particlesContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Functie om overgang te starten
+        function startTransition(type) {
+            // Verberg de hoofdcontainer met animatie
+            container.style.opacity = '0';
+            container.style.transform = 'scale(0.8) translateY(20px)';
+            
+            // Toon spinner container
+            spinnerContainer.style.display = 'flex';
+            
+            // Creëer particles
+            createParticles(20);
+            
+            // Start progress bar
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 20);
+            
+            // Verander achtergrondkleur op basis van type
+            const colors = {
+                chat: 'linear-gradient(135deg, #1a1a2e 0%, #4776E6 100%)',
+                games: 'linear-gradient(135deg, #1a1a2e 0%, #00dbde 100%)',
+                google: 'linear-gradient(135deg, #1a1a2e 0%, #34a853 100%)'
+            };
+            
+            body.style.background = colors[type];
+            
+            // Animatie sequentie
+            setTimeout(() => {
+                // Start de shrink animatie
+                spinner.classList.add('shrink');
+                loadingText.textContent = 'Klaar!';
+                
+                // Wacht tot shrink animatie klaar is en ga dan naar de pagina
+                setTimeout(() => {
+                    window.location.href = urls[type];
+                }, 800);
+                
+            }, 2000); // Totaal 2.8 seconden animatie
+        }
+
+        // Event listeners voor knoppen
+        chatBtn.addEventListener('click', () => {
+            startTransition('chat');
+        });
+
+        gamesBtn.addEventListener('click', () => {
+            startTransition('games');
+        });
+
+        googleBtn.addEventListener('click', () => {
+            startTransition('google');
+        });
+
+        // Toetsenbord navigatie
+        document.addEventListener('keydown', (e) => {
+            if (spinnerContainer.style.display === 'flex') return;
+            
+            switch(e.key) {
+                case '1':
+                    startTransition('chat');
+                    break;
+                case '2':
+                    startTransition('games');
+                    break;
+                case '3':
+                    startTransition('google');
+                    break;
+            }
+        });
+
+        // Hover effecten voor knoppen
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.05)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Initialiseer particles bij het laden
+        window.addEventListener('load', () => {
+            createParticles(10);
+        });
+    </script>
+</body>
+</html>
